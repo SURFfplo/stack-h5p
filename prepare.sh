@@ -1,18 +1,24 @@
 #!/bin/bash
 
+# clean mounts
+rm -rf /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html
+rm -rf /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf
+rm -rf /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/src
+rm -rf /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/tmp
+
+
+
 # create nfs mount
+mkdir -p /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html
+mkdir -p /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf
+mkdir -p /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/src
+mkdir -p /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/tmp
 mkdir -p /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/data
 
-# remove any old secrest and configs
-if [[ $(docker secret ls -f name=h5p -q) ]]; then
-    docker secret rm $(docker secret ls -f name=h5P -q)
-else
-    echo "no files found"
-fi
+# write data MOODLE
+git clone -b MOODLE_37_STABLE https://github.com/moodle/moodle.git /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html
 
-
-# create secrets for database
-# alternative date |md5sum|awk '{print $1}' | docker secret create my_secret -
-date |md5sum|awk '{print $1}' | docker secret create h5p_db_dba_password -
-date |md5sum|awk '{print $1}' | docker secret create h5p_password -
-
+# write data moodle modules
+cd /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html/mod
+wget https://moodle.org/plugins/download.php/20122/mod_hvp_moodle37_2019081600.zip -O temp.zip; unzip temp.zip; rm temp.zip
+chmod 755 hvp

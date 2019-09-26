@@ -1,53 +1,92 @@
-version: '3.7'
-
-networks:
-  dev-net:
-    external: true
-  test-net:
-    external: true
-  exp-net:
-    external: true
-    
-
-secrets:
-  h5p_db_dba_password:
-    external: true
-  h5P_password:
-    external: true
-
+version: '3'
 
 services:
-  h5p-db:
-    image: 192.87.106.18:56001/postgres:0.1          
+  h5p_db:
+    container_name: h5p_db
+    image: postgres:11.5-alpine
+    environment:
+      POSTGRES_USER: h5p_user
+      POSTGRES_PASSWORD: dontusethis
+      # POSTGRES_PASSWORD_FILE: /run/secrets/postgres-passwd
+      POSTGRES_DB: h5p
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+   # expose:
+   #   - "${PG_PORT}"
+   # Uncomment following lines to expose postgres to host network
+   # ports:
+   #   - "${IP}:${PG_PORT}:5432"
+    networks:
+      - $STACK_NETWORK
     volumes:
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/data:/var/lib/postgresql/data
-    secrets:
-      - h5p_db_dba_password
+      #- $PWD/psqldata:/var/lib/postgresql/data
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/psqldata:/var/lib/postgresql/data
+
+
+  h5p_php:
+    container_name: h5p_php
+    build: ./php-fpm/
     environment:
-      POSTGRES_DB:h5p 
-      POSTGRES_USER: h5p 
-      POSTGRES_PASSWORD_FILE: /run/secrets/h5p_db_dba_password
-      # POSTGRES_PASSWORD: password
+    #  WWW_ROOT: https://h5p.dev.dlo.surf.nl
+      WWW_ROOT: http://localhost
+      WWW_PORT: 80
+      MOODLE_WWW: /var/www/html
+      MOODLE_DATA: /var/moodledata 
+      MOODLE_DB_NAME: h5p 
+      MOODLE_DB_USER_NAME: h5p_user
+      MOODLE_DB_PASSWORD: dontusethis
+      MOODLE_DB_HOST_NAME: h5p_db
+      MOODLE_SSL_PROXY: 'false'
+      MOODLE_DB_PORT: ''
+      MOODLE_DB_DRIVER: pgsql #'mysql'
     networks:
       - $STACK_NETWORK
-      
-  h5p:
-    image: 192.87.106.18:56001/h5p:0.1
-    hostname: $STACK_DOMAIN
-    secrets:
-      - h5p_db_dba_password
-      - h5p_password
-    environment:
-      DB_VENDOR: POSTGRES
-      DB_ADDR: h5p-db
-      DB_DATABASE: h5p
-      DB_USER: h5p
-      DB_SCHEMA: public
-      DB_PASSWORD_FILE: /run/secrets/h5p_db_dba_password
-      #DB_PASSWORD: password
-    networks:
-      - $STACK_NETWORK
+    volumes:
+      #- $PWD/data:/var/moodledata
+      #- $PWD/html/:/var/www/html
+      #- $PWD/conf/config-dist.php:/var/www/html/config.php
+      #- $PWD/conf/custom-php.ini:/usr/local/etc/php/conf.d/php.ini
+      #- $PWD/conf/custom-opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/data::/var/moodledata
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html:/var/www/html
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/config-dist.php:/var/www/html/config.php
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/custom-php.ini:/usr/local/etc/php/conf.d/php.ini
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/custom-opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
     ports:
-      - $STACK_PORT:80
+      - 9000:9000
     depends_on:
-      - postgres
+      - h5p_db
+    links:
+      - h5p_db
+    expose:
+      - 9000
+
+  h5p_nginx:
+    container_name: h5p_nginx
+    image: nginx:1.17.3-alpine
+    ports:
+      # platform:56000+, dev:57000+, demo:58000+, pilot:59000+
+      #- $STACK_PORT:80
+      - 80:80
+    #deploy:
+    #  mode: replicated
+    #  replicas: 1
+    #  resources:
+    #    limits:
+    #      cpus: '0.5'
+    #      memory: 128M     
+    #  restart_policy:
+    #    condition: any
+    networks:
+      - $STACK_NETWORK
+    volumes:
+      #- $PWD/conf/default.conf:/etc/nginx/conf.d/default.conf:ro
+      #- $PWD/html/:/var/www/html
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html/:/var/www/html
+    links:
+      - h5p_php
+    ports:
+      - 80:80
+    depends_on:
+      - h5p_php
+
