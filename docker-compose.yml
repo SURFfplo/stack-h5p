@@ -1,5 +1,17 @@
 version: '3'
 
+networks:
+  dev-net:
+    external: true
+  test-net:
+    external: true
+  exp-net:
+    external: true
+
+secrets:
+  h5p_db_dba_password:
+    external: true
+
 services:
   h5p_db:
     container_name: h5p_db
@@ -7,7 +19,7 @@ services:
     environment:
       POSTGRES_USER: h5p_user
       POSTGRES_PASSWORD: dontusethis
-      # POSTGRES_PASSWORD_FILE: /run/secrets/postgres-passwd
+      # POSTGRES_PASSWORD_FILE: /run/secrets/h5p_db_dba_password
       POSTGRES_DB: h5p
       POSTGRES_INITDB_ARGS: "--data-checksums"
    # expose:
@@ -18,13 +30,18 @@ services:
     networks:
       - $STACK_NETWORK
     volumes:
-      #- $PWD/psqldata:/var/lib/postgresql/data
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/psqldata:/var/lib/postgresql/data
+      - /var/lib/postgresql/data
+      #- /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/psqldata:/var/lib/postgresql/data
 
+  h5p_php_cron:
+      container_name: h5p_php
+      build: ../image-moodle-php-fpm-cron/
+      networks:
+        - $STACK_NETWORK
 
   h5p_php:
     container_name: h5p_php
-    build: ./php-fpm/
+    build: ../image-moodle-php-fpm/
     environment:
     #  WWW_ROOT: https://h5p.dev.dlo.surf.nl
       WWW_ROOT: http://localhost
@@ -34,6 +51,7 @@ services:
       MOODLE_DB_NAME: h5p 
       MOODLE_DB_USER_NAME: h5p_user
       MOODLE_DB_PASSWORD: dontusethis
+    #  MOODLE_DB_PASSWORD_FILE: h5p_db_dba_password
       MOODLE_DB_HOST_NAME: h5p_db
       MOODLE_SSL_PROXY: 'false'
       MOODLE_DB_PORT: ''
@@ -41,18 +59,16 @@ services:
     networks:
       - $STACK_NETWORK
     volumes:
-      #- $PWD/data:/var/moodledata
-      #- $PWD/html/:/var/www/html
-      #- $PWD/conf/config-dist.php:/var/www/html/config.php
-      #- $PWD/conf/custom-php.ini:/usr/local/etc/php/conf.d/php.ini
-      #- $PWD/conf/custom-opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/data::/var/moodledata
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html:/var/www/html
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/config-dist.php:/var/www/html/config.php
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/custom-php.ini:/usr/local/etc/php/conf.d/php.ini
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/custom-opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
-    ports:
-      - 9000:9000
+      - ../h5p/data:/var/moodledata
+      - ../h5p/html/:/var/www/html
+      - ../h5p/conf/config-dist.php:/var/www/html/config.php
+      - ../h5p/conf/custom-php.ini:/usr/local/etc/php/conf.d/php.ini
+      - ../h5p/conf/custom-opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
+      #- /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/data::/var/moodledata
+      #- /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html:/var/www/html
+      #- /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/config-dist.php:/var/www/html/config.php
+      #- /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/custom-php.ini:/usr/local/etc/php/conf.d/php.ini
+      #- /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/custom-opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
     depends_on:
       - h5p_db
     links:
@@ -79,14 +95,12 @@ services:
     networks:
       - $STACK_NETWORK
     volumes:
-      #- $PWD/conf/default.conf:/etc/nginx/conf.d/default.conf:ro
-      #- $PWD/html/:/var/www/html
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html/:/var/www/html
+      - ../h5p/conf/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../h5p/html/:/var/www/html
+      #- /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/default.conf:/etc/nginx/conf.d/default.conf:ro
+      #- /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html/:/var/www/html
     links:
       - h5p_php
-    ports:
-      - 80:80
     depends_on:
       - h5p_php
 
