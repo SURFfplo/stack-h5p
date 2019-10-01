@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # defaults
-SERVICE=sis
+SERVICE=h5p
 VERSION=0.1
 NETWORK=dev-net
-PORT=57101
+PORT=57301
 
 # input with four arguments: go.sh SERVICE VERSION NETWORK PORT
 if [ "$1" != "" ]; then
@@ -32,9 +32,6 @@ export STACK_REPOSITORY=h5p
 # delete previous version
 # note: geen rollback!
 docker stack rm $STACK_SERVICE
-
-# init
-./init.sh
 
 # prepare
 ./prepare.sh
