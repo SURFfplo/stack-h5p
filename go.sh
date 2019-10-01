@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # defaults
-SERVICE=h5p
-VERSION=0.1
-NETWORK=dev-net
-PORT=57301
+# SERVICE=h5p
+# VERSION=0.1
+# NETWORK=dev-net
+# PORT=57301
 
 # input with four arguments: go.sh SERVICE VERSION NETWORK PORT
 if [ "$1" != "" ]; then
