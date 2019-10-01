@@ -31,6 +31,8 @@ services:
       POSTGRES_PASSWORD_FILE: /run/secrets/h5p_db_dba_password
       POSTGRES_DB: h5p
       POSTGRES_INITDB_ARGS: "--data-checksums"
+    secrets:
+      - h5p_db_dba_password  
     networks:
       - $STACK_NETWORK
     volumes:
@@ -58,12 +60,14 @@ services:
       MOODLE_DB_NAME: h5p 
       MOODLE_DB_USER_NAME: h5p_user
       # MOODLE_DB_PASSWORD: dontusethis
-      MOODLE_DB_PASSWORD_FILE: h5p_db_dba_password
+      MOODLE_DB_PASSWORD_FILE: /run/secrets/h5p_db_dba_password
       MOODLE_DB_HOST_NAME: h5p_db
       MOODLE_SSL_PROXY: 'false'
       MOODLE_DB_PORT: ''
       MOODLE_DB_DRIVER: pgsql #'mysql'
-    networks:
+    secrets:
+      - h5p_db_dba_password  
+      networks:
       - $STACK_NETWORK
     volumes:
       # - ../h5p/data:/var/moodledata
