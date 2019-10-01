@@ -40,16 +40,34 @@ services:
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/psqldata:/var/lib/postgresql/data
 
   h5p_php_cron:
-      container_name: h5p_php_cron
-      image: 192.87.106.18:56001/moodle-php-fpm-cron:0.1
-      # build: ../image-moodle-php-fpm-cron/
-      networks:
-        - $STACK_NETWORK
+    container_name: h5p_php_cron
+    image: 192.87.106.18:56001/moodle-php-fpm-cron:0.1
+    # build: ../image-moodle-php-fpm-cron/
+    deploy:
+      mode: replicated
+      replicas: 1
+#      resources:
+#        limits:
+#          cpus: '1.0'
+#          memory: 256M
+      restart_policy:
+        condition: any  
+    networks:
+      - $STACK_NETWORK
 
   h5p_php:
     container_name: h5p_php
     image: 192.87.106.18:56001/moodle-php-fpm:0.1
     # build: ../image-moodle-php-fpm/
+    deploy:
+      mode: replicated
+      replicas: 1
+#      resources:
+#        limits:
+#          cpus: '1.0'
+#          memory: 256M
+      restart_policy:
+        condition: any
     environment:
       WWW_ROOT: https://${STACK_DOMAIN}
       # WWW_ROOT: http://localhost
