@@ -67,7 +67,7 @@ services:
       MOODLE_DB_DRIVER: pgsql #'mysql'
     secrets:
       - h5p_db_dba_password  
-      networks:
+    networks:
       - $STACK_NETWORK
     volumes:
       # - ../h5p/data:/var/moodledata
