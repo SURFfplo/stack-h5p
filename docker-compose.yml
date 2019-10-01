@@ -39,14 +39,14 @@ services:
 
   h5p_php_cron:
       container_name: h5p_php
-      image: 192.87.106.18:56001/image-moodle-php-fpm-cron:0.1
+      image: 192.87.106.18:56001/moodle-php-fpm-cron:0.1
       # build: ../image-moodle-php-fpm-cron/
       networks:
         - $STACK_NETWORK
 
   h5p_php:
     container_name: h5p_php
-    image: 192.87.106.18:56001/image-moodle-php-fpm:0.1
+    image: 192.87.106.18:56001/moodle-php-fpm:0.1
     # build: ../image-moodle-php-fpm/
     environment:
       WWW_ROOT: https://${STACK_DOMAIN}
