@@ -71,7 +71,7 @@ services:
       # - ../h5p/conf/config-dist.php:/var/www/html/config.php
       # - ../h5p/conf/custom-php.ini:/usr/local/etc/php/conf.d/php.ini
       # - ../h5p/conf/custom-opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/data::/var/moodledata
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/data:/var/moodledata
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html:/var/www/html
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/config-dist.php:/var/www/html/config.php
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/custom-php.ini:/usr/local/etc/php/conf.d/php.ini
