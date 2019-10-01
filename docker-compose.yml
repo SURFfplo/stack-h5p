@@ -40,7 +40,7 @@ services:
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/psqldata:/var/lib/postgresql/data
 
   h5p_php_cron:
-      container_name: h5p_php
+      container_name: h5p_php_cron
       image: 192.87.106.18:56001/moodle-php-fpm-cron:0.1
       # build: ../image-moodle-php-fpm-cron/
       networks:
