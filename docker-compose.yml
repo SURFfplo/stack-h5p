@@ -80,7 +80,7 @@ services:
       MOODLE_DB_PASSWORD: dontusethis
 #      MOODLE_DB_PASSWORD_FILE: /run/secrets/h5p_db_dba_password
       MOODLE_DB_HOST_NAME: h5p_db
-      MOODLE_SSL_PROXY: 'false'
+      MOODLE_SSL_PROXY: 'true'
       MOODLE_DB_PORT: ''
       MOODLE_DB_DRIVER: pgsql #'mysql'
     secrets:
