@@ -27,8 +27,8 @@ services:
         condition: any
     environment:
       POSTGRES_USER: h5p_user
-      # POSTGRES_PASSWORD: dontusethis
-      POSTGRES_PASSWORD_FILE: /run/secrets/h5p_db_dba_password
+      POSTGRES_PASSWORD: dontusethis
+      #POSTGRES_PASSWORD_FILE: /run/secrets/h5p_db_dba_password
       POSTGRES_DB: h5p
       POSTGRES_INITDB_ARGS: "--data-checksums"
     secrets:
@@ -77,9 +77,8 @@ services:
       MOODLE_DATA: /var/moodledata 
       MOODLE_DB_NAME: h5p 
       MOODLE_DB_USER_NAME: h5p_user
-      # MOODLE_DB_PASSWORD: dontusethis
-      MOODLE_DB_PASSWORD: $(cat /run/secrets/h5p_db_dba_password)
-      MOODLE_DB_PASSWORD_FILE: /run/secrets/h5p_db_dba_password
+      MOODLE_DB_PASSWORD: dontusethis
+#      MOODLE_DB_PASSWORD_FILE: /run/secrets/h5p_db_dba_password
       MOODLE_DB_HOST_NAME: h5p_db
       MOODLE_SSL_PROXY: 'false'
       MOODLE_DB_PORT: ''
