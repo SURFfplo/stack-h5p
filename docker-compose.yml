@@ -56,7 +56,7 @@ services:
 #       - $STACK_NETWORK
 
   h5p_php:
-    container_name: h5p_php
+    hostname: ${STACK_DOMAIN}
     image: 192.87.106.18:56001/moodle-php-fpm:0.1
     # build: ../image-moodle-php-fpm/
     deploy:
