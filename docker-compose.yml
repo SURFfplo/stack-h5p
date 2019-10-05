@@ -72,7 +72,7 @@ services:
       WWW_ROOT: https://${STACK_DOMAIN}
       # WWW_ROOT: http://localhost
       # WWW_PORT: 80
-      WWW_PORT: 443
+      WWW_PORT: 80
       MOODLE_WWW: /var/www/html
       MOODLE_DATA: /var/moodledata 
       MOODLE_DB_NAME: h5p 
@@ -80,7 +80,7 @@ services:
       MOODLE_DB_PASSWORD: dontusethis
 #      MOODLE_DB_PASSWORD_FILE: /run/secrets/h5p_db_dba_password
       MOODLE_DB_HOST_NAME: h5p_db
-      MOODLE_SSL_PROXY: 'false'
+      MOODLE_SSL_PROXY: 'true'
       MOODLE_DB_PORT: ''
       MOODLE_DB_DRIVER: pgsql #'mysql'
     secrets:
@@ -110,7 +110,7 @@ services:
     image: 192.87.106.18:56001/nginx:0.1
     ports:
       # platform:56000+, dev:57000+, demo:58000+, pilot:59000+
-      - $STACK_PORT:443
+      - $STACK_PORT:80
       # - 80:80
     deploy:
      mode: replicated
