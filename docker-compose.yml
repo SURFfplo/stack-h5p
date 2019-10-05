@@ -72,7 +72,7 @@ services:
       WWW_ROOT: https://${STACK_DOMAIN}
       # WWW_ROOT: http://localhost
       # WWW_PORT: 80
-      WWW_PORT: 80
+      # WWW_PORT: 80
       MOODLE_WWW: /var/www/html
       MOODLE_DATA: /var/moodledata 
       MOODLE_DB_NAME: h5p 
