@@ -1,0 +1,95 @@
+version: '3.7'
+
+networks:
+  dev-net:
+    external: true
+  test-net:
+    external: true
+  exp-net:
+    external: true
+
+secrets:
+  h5p_db_dba_password:
+    external: true
+
+services:
+  h5p_db:
+    container_name: h5p_db
+    image: 192.87.106.18:56001/postgres:0.1
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+      restart_policy:
+        condition: any
+    environment:
+      POSTGRES_USER: h5p_user
+      POSTGRES_PASSWORD: dontusethis
+      #POSTGRES_PASSWORD_FILE: /run/secrets/h5p_db_dba_password
+      POSTGRES_DB: h5p
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    secrets:
+      - h5p_db_dba_password  
+    networks:
+      - $STACK_NETWORK
+    volumes:
+      # - /var/lib/postgresql/data
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/psqldata:/var/lib/postgresql/data
+
+
+  h5p_php:
+    hostname: ${STACK_DOMAIN}
+    image: 192.87.106.18:56001/moodle-php-fpm:0.1
+    # build: ../image-moodle-php-fpm/
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 256M
+      restart_policy:
+        condition: any
+    command:
+      php admin/cli/install.php --lang=cs --adminuser=${MOODLE_USER_NAME} --adminpass=${MOODLE_PASSWORD} --adminemail${MOODLE_ÈMAIL} --agree-license
+    environment:
+      WWW_ROOT: https://${STACK_DOMAIN}
+      # WWW_ROOT: http://localhost
+      # WWW_PORT: 80
+      # WWW_PORT: 80
+      MOODLE_WWW: /var/www/html
+      MOODLE_DATA: /var/moodledata 
+      MOODLE_DB_NAME: h5p 
+      MOODLE_DB_USER_NAME: h5p_user
+      MOODLE_DB_PASSWORD: dontusethis
+#      MOODLE_DB_PASSWORD_FILE: /run/secrets/h5p_db_dba_password
+      MOODLE_DB_HOST_NAME: h5p_db
+      MOODLE_SSL_PROXY: 'true'
+      MOODLE_DB_PORT: ''
+      MOODLE_DB_DRIVER: pgsql #'mysql'
+    secrets:
+      - h5p_db_dba_password  
+    networks:
+      - $STACK_NETWORK
+    volumes:
+      # - ../h5p/data:/var/moodledata
+      # - ../h5p/html/:/var/www/html
+      # - ../h5p/conf/config-dist.php:/var/www/html/config.php
+      # - ../h5p/conf/custom-php.ini:/usr/local/etc/php/conf.d/php.ini
+      # - ../h5p/conf/custom-opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/data:/var/moodledata
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html:/var/www/html
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/config-dist.php:/var/www/html/config.php
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/custom-php.ini:/usr/local/etc/php/conf.d/php.ini
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/custom-opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
+    depends_on:
+      - h5p_db
+    links:
+      - h5p_db
+    expose:
+      - 9000
+
+

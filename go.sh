@@ -19,6 +19,17 @@ fi
 if [ "$4" != "" ]; then
         PORT=$4
 fi
+if [ "$5" != "" ]; then
+        EMAIL=$5
+fi
+if [ "$6" != "" ]; then
+        USER_NAME=$6
+fi
+if [ "$7" != "" ]; then
+        PASSWORD=$7
+fi
+
+
 
 if [ $NETWORK == "dev-net" ]; then
         export STACK_DOMAIN=h5p.dev.dlo.surf.nl
@@ -41,9 +52,9 @@ export STACK_SERVICE=$SERVICE
 export STACK_VERSION=$VERSION
 export STACK_NETWORK=$NETWORK
 export STACK_PORT=$PORT
-
-# source
-export STACK_REPOSITORY=h5p
+export MOODLE_EMAIL=$EMAIL
+export MOODLE_USER_NAME=$USER_NAME
+export MOODLE_PASSWORD=$PASSWORD
 
 # delete previous version
 # note: geen rollback!
@@ -51,6 +62,9 @@ docker stack rm $STACK_SERVICE
 
 # prepare
 ./prepare.sh
+
+# go prep
+docker stack deploy --with-registry-auth -c docker-compose-initial.yml $STACK_SERVICE
 
 # go
 docker stack deploy --with-registry-auth -c docker-compose.yml $STACK_SERVICE
