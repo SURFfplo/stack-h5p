@@ -40,7 +40,7 @@ services:
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/psqldata:/var/lib/postgresql/data
 
 
-  h5p_php:
+  h5p_php_build:
     hostname: ${STACK_DOMAIN}
     image: 192.87.106.18:56001/moodle-php-fpm:0.1
     # build: ../image-moodle-php-fpm/
