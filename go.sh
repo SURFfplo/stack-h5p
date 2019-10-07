@@ -63,12 +63,15 @@ docker stack rm $STACK_SERVICE
 # prepare
 ./prepare.sh
 
-# go prep
+# go prep db
 docker stack deploy --with-registry-auth -c docker-compose-initial.yml $STACK_SERVICE
-
-
-
 sleep 200
+
+# go sidecar for DB initialization
+docker stack deploy --with-registry-auth -c docker-compose-sidecar.yml $STACK_SERVICE
+sleep 200
+
+
 # go
 docker stack deploy --with-registry-auth -c docker-compose.yml $STACK_SERVICE
 
