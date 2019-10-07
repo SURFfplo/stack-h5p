@@ -68,7 +68,7 @@ docker stack deploy --with-registry-auth -c docker-compose-initial.yml $STACK_SE
 
 
 
-wait 200
+sleep 200
 # go
 docker stack deploy --with-registry-auth -c docker-compose.yml $STACK_SERVICE
 
