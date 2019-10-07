@@ -53,7 +53,7 @@ services:
           memory: 256M
       restart_policy:
         condition: any
-    command: php admin/cli/install_database.php --lang=nl --adminuser=${MOODLE_USER_NAME} --adminpass=${MOODLE_PASSWORD} --adminemail=${MOODLE_EMAIL} --agree-license
+    command: bash -c "/wait-for-it.sh -t 40 h5p_db:5432 && php admin/cli/install_database.php --lang=nl --adminuser=${MOODLE_USER_NAME} --adminpass=${MOODLE_PASSWORD} --adminemail=${MOODLE_EMAIL} --agree-license"
     environment:
       WWW_ROOT: https://${STACK_DOMAIN}
       # WWW_ROOT: http://localhost
@@ -81,6 +81,7 @@ services:
       # - ../h5p/conf/custom-opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/data:/var/moodledata
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html:/var/www/html
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/wait-for-it.sh:/wait-for-it.sh
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/config-dist.php:/var/www/html/config.php
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/custom-php.ini:/usr/local/etc/php/conf.d/php.ini
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf/custom-opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
