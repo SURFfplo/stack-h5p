@@ -52,7 +52,8 @@ services:
           cpus: '1.0'
           memory: 256M
       restart_policy:
-        condition: once
+        condition: none
+        max_attempts: 1
     command: bash -c "php admin/cli/install_database.php --lang=nl --adminuser=${MOODLE_USER_NAME} --adminpass=${MOODLE_PASSWORD} --adminemail=${MOODLE_EMAIL} --agree-license"
     environment:
       WWW_ROOT: https://${STACK_DOMAIN}
