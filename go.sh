@@ -5,6 +5,7 @@
 # VERSION=0.1
 # NETWORK=dev-net
 # PORT=57301
+# RUN_TYPE=initial|rebuild
 
 # input with four arguments: go.sh SERVICE VERSION NETWORK PORT
 if [ "$1" != "" ]; then
@@ -28,8 +29,8 @@ fi
 if [ "$7" != "" ]; then
         PASSWORD=$7
 fi
-
-
+if [ "$8" != ""]; then
+        RUN_TYPE=$8
 
 if [ $NETWORK == "dev-net" ]; then
         export STACK_DOMAIN=h5p.dev.dlo.surf.nl
@@ -60,17 +61,9 @@ export MOODLE_PASSWORD=$PASSWORD
 # note: geen rollback!
 docker stack rm $STACK_SERVICE
 
-# prepare
-./prepare.sh
-
-# go prep db
-docker stack deploy --with-registry-auth -c docker-compose-initial.yml $STACK_SERVICE
-sleep 200
-
-# go sidecar for DB initialization
-docker stack deploy --with-registry-auth -c docker-compose-sidecar.yml $STACK_SERVICE
-sleep 200
-
+if [ $RUN_TYPE == "initial"]; then
+        ./initial.sh
+fi
 
 # go
 docker stack deploy --with-registry-auth -c docker-compose.yml $STACK_SERVICE
