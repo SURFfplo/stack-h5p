@@ -31,6 +31,7 @@ if [ "$7" != "" ]; then
 fi
 if [ "$8" != ""]; then
         DEPLOYMENT=$8
+fi
 
 if [ $NETWORK == "dev-net" ]; then
         export STACK_DOMAIN=h5p.dev.dlo.surf.nl
@@ -67,4 +68,3 @@ fi
 
 # go
 docker stack deploy --with-registry-auth -c docker-compose.yml $STACK_SERVICE
-
