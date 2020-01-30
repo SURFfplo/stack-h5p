@@ -30,7 +30,7 @@ if [ "$7" != "" ]; then
         PASSWORD=$7
 fi
 if [ "$8" != ""]; then
-        RUN_TYPE=$8
+        DEPLOYMENT=$8
 
 if [ $NETWORK == "dev-net" ]; then
         export STACK_DOMAIN=h5p.dev.dlo.surf.nl
@@ -61,7 +61,7 @@ export MOODLE_PASSWORD=$PASSWORD
 # note: geen rollback!
 docker stack rm $STACK_SERVICE
 
-if [ $RUN_TYPE == "initial"]; then
+if [ $DEPLOYMENT == "initial"]; then
         ./initial.sh
 fi
 
