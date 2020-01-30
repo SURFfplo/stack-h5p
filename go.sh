@@ -29,7 +29,7 @@ fi
 if [ "$7" != "" ]; then
         PASSWORD=$7
 fi
-if [ "$8" != ""]; then
+if [ "$8" != "" ]; then
         DEPLOYMENT=$8
 fi
 
@@ -62,7 +62,7 @@ export MOODLE_PASSWORD=$PASSWORD
 # note: geen rollback!
 docker stack rm $STACK_SERVICE
 
-if [ $DEPLOYMENT == "initial"]; then
+if [ $DEPLOYMENT == "initial" ]; then
         ./initial.sh
 fi
 
