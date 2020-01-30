@@ -43,9 +43,11 @@ git clone -b MOODLE_37_STABLE https://github.com/moodle/moodle.git /mnt/nfs/nfsd
 
 # write data moodle modules
 mkdir /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html/mod 
-cd /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html/mod
-wget https://moodle.org/plugins/download.php/20122/mod_hvp_moodle37_2019081600.zip -O temp.zip; unzip temp.zip; rm temp.zip
-chmod 755 hvp
+/mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html/mod
+wget https://moodle.org/plugins/download.php/20122/mod_hvp_moodle37_2019081600.zip -O /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html/mod/temp.zip
+unzip /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html/mod/temp.zip
+rm /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html/mod/temp.zip
+chmod 755 /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html/mod/hvp
 
 
 # go prep db
